@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WanderCraft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #111;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.8s ease-in-out;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 30px 10px;
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #ffcc00;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Sections for animation */
+        section {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Search Box */
+        .search-box {
+            margin: 20px auto;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 40px;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .search-box .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #555;
+        }
+
+        /* Country Cards (Homepage) */
+        .places {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            padding: 30px 0;
+        }
+
+        .card {
+            background: #fff;
+            color: #333;
+            border-radius: 15px;
+            width: 260px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.25);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0px 6px 25px rgba(0,0,0,0.35);
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 12px;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .card h3 {
+            margin: 12px 0 6px;
+            font-size: 20px;
+            color: #222;
+            font-weight: 600;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Back Button & No Results */
+        .back-btn {
+            display: inline-block;
+            margin: 20px;
+            padding: 10px 25px;
+            background: #ffcc00;
+            color: #000;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #ffaa00;
+        }
+
+        #noResults {
+            text-align: center;
+            color: #ffcc00;
+            margin-top: 50px;
+            font-size: 1.2rem;
+        }
+
+        /* Country Details Page */
+        #countryDetails h2 {
+            text-align: center;
+            color: #ffcc00;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .country-info-container {
+            padding: 20px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .places {
+                justify-content: center;
+            }
+
+            .card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <span class="logo">🌍</span>WanderCraft
+    </header>
+
+    <main class="container">
+        <section id="homepage">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search for a country...">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="places" id="placesList">
+                </div>
+            <div id="noResults" class="hidden">
+                <p>No results found. Please try a different country.</p>
+            </div>
+        </section>
+
+        <section id="countryDetails" class="hidden">
+            <div class="back-btn">⬅ Back to Home</div>
+            <div class="country-info-container">
+                </div>
+        </section>
+    </main>
+
+    <script>
+        // A single source of truth for all country data
+        const ALL_COUNTRIES_DATA = {
+            "Spain": {
+                img: "images/spain.jpg",
+                desc: "Experience vibrant festivals, Mediterranean beaches, and world-class architecture in Spain. From the lively streets of Madrid to the stunning beaches of Costa del Sol, Spain offers a rich blend of history, art, and delicious cuisine, making it a perfect destination for any traveler seeking adventure and cultural immersion. The country's diverse landscapes range from the Pyrenees mountains to the volcanic Canary Islands, providing a variety of experiences.",
+                bg: "images/spain2.jpg",
+                places: [
+                    { name: "Sagrada Familia", desc: "A masterpiece by Antoni Gaudí, the Basílica de la Sagrada Família is an unfinished Roman Catholic minor basilica in Barcelona. Its intricate design blends Gothic and Art Nouveau styles, featuring towering spires and symbolic facades that tell the story of the Catholic faith. Despite being under construction for over a century, it remains one of the most visited monuments in Spain and a symbol of Catalan modernism, attracting millions of visitors annually who come to marvel at its unique architecture and spiritual atmosphere." },
+                    { name: "Park Güell", desc: "Also designed by Gaudí, Park Güell is a whimsical public park system composed of gardens and architectonic elements located on Carmel Hill in Barcelona. It is known for its vibrant mosaic work, serpentine benches, and the iconic dragon staircase. Visitors can enjoy a leisurely stroll through its surreal landscapes and enjoy panoramic views of the city below. The park is a UNESCO World Heritage Site and an excellent example of Gaudí's unique naturalistic style, harmonizing with the surrounding environment." },
+                    { name: "Alhambra", desc: "The Alhambra is a magnificent palace and fortress complex located in Granada, Andalusia. Originally constructed as a small fortress in 889 AD, it was transformed into a royal palace by the Nasrid dynasty. The Alhambra is a fine example of Moorish architecture, with its detailed geometric patterns, tranquil courtyards, and beautiful fountains that showcase the sophisticated craftsmanship of its builders. Its name, which means 'the red one' in Arabic, is said to be derived from the reddish color of the fortress walls." },
+                    { name: "Mezquita of Córdoba", desc: "The Mezquita of Córdoba is a mesmerizing mosque-cathedral that stands as a testament to the coexistence of different cultures. Its most famous feature is the forest of columns and double arches made of jasper, onyx, marble, and granite. The structure was originally a mosque, and a Renaissance cathedral was built inside it after the Reconquista, creating a unique blend of Islamic and Christian architecture. This historical site perfectly illustrates the complex history of Andalusia and its diverse influences." },
+                    { name: "The Guggenheim Museum", desc: "Located in Bilbao, the Guggenheim Museum is a museum of modern and contemporary art designed by architect Frank Gehry. Its striking, titanium-clad building is a landmark of 20th-century architecture. The museum houses a vast collection of artworks and has revitalized the city, making it a major tourist destination for art and architecture lovers from around the world. The building itself is considered a work of art, with its fluid, organic shapes reflecting the surrounding landscape." },
+                    { name: "Plaza de España", desc: "Situated in the Parque de María Luisa in Seville, the Plaza de España is a grand semi-circular plaza built for the Ibero-American Exposition of 1929. The plaza is flanked by a beautiful building with a series of bridges and a canal, representing the four ancient kingdoms of Spain. It is known for its intricate tile work (azulejos) depicting maps and historical scenes from all the provinces of Spain, serving as a stunning tribute to the country's rich history and culture." },
+                    { name: "El Teide National Park", desc: "El Teide National Park, located on the island of Tenerife, is home to Mount Teide, the highest peak in Spain and a dormant volcano. The national park's volcanic landscapes, lunar-like craters, and unique rock formations make it a stunning and otherworldly natural wonder. It is a UNESCO World Heritage site and a popular spot for hiking and stargazing due to its clear skies, offering a truly unforgettable experience for nature enthusiasts." },
+                    { name: "Santiago de Compostela Cathedral", desc: "The Santiago de Compostela Cathedral is the final destination of the Camino de Santiago pilgrimage route. This grand Romanesque cathedral is believed to house the remains of Saint James, one of the apostles of Jesus. The cathedral's impressive Baroque façade and intricate interior make it a significant religious and architectural landmark. Thousands of pilgrims complete the journey each year, finding a sense of accomplishment and spiritual fulfillment upon their arrival at the cathedral." },
+                    { name: "Ciutat de les Arts i les Ciències", desc: "The City of Arts and Sciences in Valencia is a futuristic architectural complex designed by Santiago Calatrava. It includes a planetarium, an opera house, an IMAX cinema, and a science museum. The complex's striking white structures and reflective pools create a stunning visual spectacle and an ideal environment for exploring science, art, and culture. It is a must-see for anyone visiting Valencia, offering a glimpse into modern Spanish architectural innovation." },
+                    { name: "La Concha", desc: "A magnificent shell-shaped bay located in the heart of San Sebastián, La Concha is considered one of the most beautiful city beaches in Europe. Its golden sand and calm waters make it an ideal place for swimming and sunbathing. The promenade that surrounds it is perfect for a leisurely stroll, offering stunning views of Santa Clara Island and Mount Igueldo. The beach is a central part of life in San Sebastián and a perfect place to relax and enjoy the vibrant coastal atmosphere." }
+                ]
+            },
+            "America": {
+                img: "images/america.jpg",
+                desc: "From the majestic coastlines of California to the iconic skylines of New York, America offers an incredible range of experiences. It is a land of diverse cultures and natural wonders, including vast national parks, bustling metropolises, and historic monuments that tell the story of a nation. Whether you seek adventure in the wilderness or a taste of urban life, the United States has something for every type of traveler.",
+                bg: "images/america2.jpg",
+                places: [
+                    { name: "Statue of Liberty", desc: "A colossal neoclassical sculpture on Liberty Island in New York Harbor, the Statue of Liberty was a gift from the people of France to the United States. It is a universal symbol of freedom and democracy, greeting millions of immigrants as they arrived in the country. Visitors can take a ferry to the island to explore the grounds, climb to the crown for panoramic views, and reflect on its powerful message of hope and opportunity." },
+                    { name: "Grand Canyon", desc: "Carved by the Colorado River over millions of years, the Grand Canyon in Arizona is a natural wonder of unparalleled scale and beauty. Its sheer cliffs, deep ravines, and dramatic geological formations make it a breathtaking sight. The park offers numerous activities, including hiking, rafting, and sightseeing from the many lookout points along its rim, providing an unforgettable experience of nature's raw power." },
+                    { name: "Yellowstone National Park", desc: "America's first national park, Yellowstone is a vast wilderness area spanning parts of Wyoming, Montana, and Idaho. It is famous for its geothermal features, including the Old Faithful geyser, hot springs, and bubbling mud pots. The park is also a sanctuary for diverse wildlife, such as bears, wolves, bison, and elk, offering visitors a unique opportunity to witness nature in its pristine state." },
+                    { name: "Golden Gate Bridge", desc: "An iconic suspension bridge spanning the Golden Gate, the strait connecting San Francisco Bay and the Pacific Ocean. The bridge's distinctive orange color and Art Deco design make it a stunning landmark. It is a popular spot for pedestrians and cyclists, offering magnificent views of the city skyline, Alcatraz Island, and the surrounding natural beauty of the Bay Area." },
+                    { name: "Times Square", desc: "Located in Midtown Manhattan, Times Square is a major commercial intersection and a global symbol of New York City. It is known for its dazzling billboards, Broadway theaters, and bustling crowds. The square comes alive at night, with a vibrant energy that makes it a must-visit destination for anyone looking to experience the heart of the city's entertainment and culture." },
+                    { name: "Waikiki Beach", desc: "A world-famous beach located in Honolulu, Hawaii, Waikiki is known for its beautiful crescent of sand, calm turquoise waters, and views of the Diamond Head crater. It is a popular spot for surfing, swimming, and sunbathing. The beach is lined with hotels, restaurants, and shops, offering a lively and tropical atmosphere that embodies the spirit of aloha." },
+                    { name: "Las Vegas Strip", desc: "A stretch of South Las Vegas Boulevard in Nevada, the Las Vegas Strip is famous for its concentration of world-class hotels, casinos, and entertainment venues. The city's famous resorts and dazzling lights create a spectacle of excess and excitement. Visitors can enjoy live shows, gourmet dining, and a nightlife scene that never sleeps." },
+                    { name: "Mount Rushmore National Memorial", desc: "Located in the Black Hills of South Dakota, Mount Rushmore is a massive sculpture carved into the granite face of the mountain. It features the 60-foot heads of four U.S. presidents: George Washington, Thomas Jefferson, Theodore Roosevelt, and Abraham Lincoln. The memorial is a powerful symbol of American democracy and a tribute to the nation's history." },
+                    { name: "Gateway Arch", desc: "A towering arch in St. Louis, Missouri, the Gateway Arch is a monument to the westward expansion of the United States. It is the world's tallest arch and a stunning example of modern architecture. Visitors can take a tram to the top for incredible views of the city and the Mississippi River, symbolizing the gateway to the West." },
+                    { name: "New Orleans French Quarter", desc: "The historic heart of New Orleans, the French Quarter is famous for its vibrant street life, lively jazz music, and beautiful iron balconies. The district is a cultural melting pot, with a rich history influenced by French, Spanish, and Creole traditions. Visitors can explore Bourbon Street, enjoy delicious Cajun cuisine, and immerse themselves in the unique atmosphere of this legendary city." }
+                ]
+            },
+            "France": {
+                img: "images/france.jpg",
+                desc: "Discover the romance of Paris, the art of the Louvre, and the charm of French countryside villages. France is a country of extraordinary diversity, from the snow-capped Alps to the sun-drenched beaches of the French Riviera. Its rich history, world-renowned cuisine, and artistic heritage make it a destination that captivates every visitor. Whether you're exploring ancient châteaux or strolling through vineyards, France offers a timeless and elegant experience.",
+                bg: "images/france2.jpg",
+                places: [
+                    { name: "Eiffel Tower", desc: "An iconic symbol of Paris and a global cultural icon, the Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars. Named after its engineer, Gustave Eiffel, it was originally built as the entrance to the 1889 World's Fair. Visitors can ascend to the top for breathtaking panoramic views of the city, especially at night when the tower sparkles with a magnificent light show, cementing its status as a symbol of romance and beauty." },
+                    { name: "Louvre Museum", desc: "The world’s largest art museum and a historic monument in Paris. The Louvre is home to some of the most famous artworks in history, including the Mona Lisa and the Venus de Milo. Its stunning pyramid entrance is a modern marvel that contrasts beautifully with the ancient palace it sits in front of. Exploring its vast collections, from Egyptian antiquities to Renaissance masterpieces, can take days, making it a paradise for art lovers." },
+                    { name: "Palace of Versailles", desc: "A former royal residence located in Versailles, a suburb of Paris. The Palace of Versailles is a testament to the opulence and power of the French monarchy, particularly Louis XIV. Its lavish Hall of Mirrors, ornate royal apartments, and spectacular formal gardens are a marvel of 17th-century European art and architecture. A visit to Versailles is a journey back in time, offering a glimpse into the grandeur of a bygone era." },
+                    { name: "Mont Saint-Michel", desc: "A stunning tidal island and commune located in Normandy. Mont Saint-Michel is a UNESCO World Heritage Site known for its medieval abbey, which sits majestically atop a rocky islet. The island is accessible by a causeway at low tide, and its narrow, winding streets lead up to the abbey, offering a truly unique and mystical experience. It's a striking example of French Gothic architecture and a place of pilgrimage." },
+                    { name: "French Riviera (Côte d'Azur)", desc: "A stretch of the southeastern coast of France, the French Riviera is famous for its glamorous beaches, charming coastal towns, and luxurious resorts. Destinations like Nice, Cannes, and Saint-Tropez offer a blend of art, culture, and sun-soaked relaxation. The deep blue waters of the Mediterranean Sea and the vibrant colors of the coastal towns create an idyllic setting for a summer escape." },
+                    { name: "Château de Chambord", desc: "A magnificent castle located in the Loire Valley, the Château de Chambord is one of the most recognizable châteaux in the world due to its distinctive French Renaissance architecture. It was built as a hunting lodge for King Francis I. The castle's unique double-helix staircase, possibly designed by Leonardo da Vinci, and its thousands of intricate sculptures make it a marvel of design and a symbol of royal extravagance." },
+                    { name: "Notre-Dame Cathedral", desc: "A medieval Catholic cathedral on the Île de la Cité in Paris. Notre-Dame is a masterpiece of French Gothic architecture, known for its iconic gargoyles, soaring spires, and beautiful stained-glass windows. Although it suffered significant damage in a 2019 fire, its resilience and ongoing restoration efforts continue to inspire. It remains a powerful symbol of French history, culture, and faith." },
+                    { name: "The Alps", desc: "The French Alps offer a stunning natural landscape of snow-capped mountains, serene lakes, and picturesque villages. It is a premier destination for winter sports, including skiing and snowboarding, as well as hiking and climbing in the summer. Destinations like Mont Blanc, the highest peak in Western Europe, and the charming town of Chamonix, provide an incredible backdrop for adventure and outdoor recreation." },
+                    { name: "Provence", desc: "A region in southeastern France known for its rolling lavender fields, ancient Roman ruins, and charming villages perched on hillsides. Provence has inspired countless artists with its beautiful light and vibrant colors. Visitors can explore the historic city of Avignon, wander through the vineyards of the Rhône Valley, and enjoy the delicious Provençal cuisine, which features fresh herbs, olive oil, and regional produce." },
+                    { name: "Bordeaux", desc: "A port city on the Garonne River in southwestern France, Bordeaux is the heart of the world's wine industry. It is famous for its beautiful 18th-century architecture, elegant public squares, and as a gateway to the surrounding vineyards. Visitors can take part in wine tastings, explore the Cité du Vin museum, and stroll along the riverfront, making it an essential destination for wine lovers and history enthusiasts." }
+                ]
+            },
+            "Italy": {
+                img: "images/italy.jpg",
+                desc: "Walk through Roman history, sail Venetian canals, and enjoy authentic Italian cuisine. Italy is a country steeped in art, history, and culture, with a landscape that ranges from the rugged beauty of the Dolomites to the serene coastlines of Sicily. Its ancient ruins, Renaissance masterpieces, and charming villages make it a timeless destination that offers a new discovery around every corner.",
+                bg: "images/italy2.jpg",
+                places: [
+                    { name: "Colosseum", desc: "An elliptical amphitheater in the center of Rome, the Colosseum is the largest ancient amphitheater ever built and remains a powerful symbol of the Roman Empire. It was used for gladiatorial contests, public spectacles, and dramatic reenactments. Today, it stands as a testament to the engineering and architectural genius of the Romans, allowing visitors to walk in the footsteps of emperors and gladiators, and to imagine the grand events of a bygone era." },
+                    { name: "Venice Canals", desc: "Venice is a city built on more than 100 small islands in a lagoon in the Adriatic Sea. It is famous for its romantic canals, historic gondolas, and beautiful architecture. The Grand Canal, the city's main waterway, is lined with magnificent palaces, and a gondola ride through the smaller canals offers a unique perspective on the city's beauty. Venice's timeless charm and magical atmosphere make it an unforgettable destination." },
+                    { name: "Leaning Tower of Pisa", desc: "The Leaning Tower of Pisa is the bell tower of the Pisa Cathedral, famous for its unintended tilt. Construction began in the 12th century, but the tower began to lean due to unstable ground. Over the centuries, efforts have been made to stabilize the structure. The tower is a global symbol of Italy and a popular tourist attraction, with visitors often posing for humorous photos pretending to hold it up." },
+                    { name: "Florence Cathedral", desc: "The Florence Cathedral, or Duomo, is the main church of Florence, Italy. Its magnificent dome, designed by Filippo Brunelleschi, is a masterpiece of Renaissance architecture and a symbol of Florence's artistic and cultural power. Visitors can climb to the top of the dome for stunning views of the city, including the Ponte Vecchio and the Arno River. The cathedral's ornate façade and intricate interior make it a must-see for art and history lovers." },
+                    { name: "Pompeii", desc: "An ancient Roman city near modern Naples, Pompeii was buried under volcanic ash and pumice after the eruption of Mount Vesuvius in 79 AD. The ash preserved the city and its inhabitants, offering a unique and poignant glimpse into ancient Roman life. Visitors can walk through the city's streets, explore its villas and temples, and see the casts of its victims, providing a powerful and somber experience." },
+                    { name: "Trevi Fountain", desc: "A stunning fountain in the Trevi district of Rome, the Trevi Fountain is the largest Baroque fountain in the city and one of the most famous fountains in the world. It depicts the sea god Oceanus on a chariot pulled by two horses. According to tradition, visitors who toss a coin over their shoulder into the fountain are ensured a return to Rome. It's a beautiful spot for a photo and a symbol of Roman grandeur." },
+                    { name: "Cinque Terre", desc: "Cinque Terre is a rugged portion of the Italian Riviera made up of five beautiful, colorful fishing villages: Monterosso al Mare, Vernazza, Corniglia, Manarola, and Riomaggiore. The villages are connected by hiking trails that offer spectacular views of the coastline and the Mediterranean Sea. The region is a UNESCO World Heritage Site and a popular destination for hikers and those seeking a scenic coastal escape." },
+                    { name: "Vatican City", desc: "An independent city-state and the headquarters of the Roman Catholic Church, Vatican City is located within Rome. It is home to St. Peter's Basilica, the Vatican Museums, and the Sistine Chapel, which features Michelangelo's famous frescoes. The city is a treasure trove of art and history, drawing pilgrims and tourists from around the world to witness its spiritual and cultural significance." },
+                    { name: "Ponte Vecchio", desc: "A medieval stone bridge over the Arno River in Florence. The Ponte Vecchio is a unique bridge because it is lined with shops, primarily jewelers, that have been a part of the bridge for centuries. It is the only bridge in Florence that survived World War II and a beautiful symbol of the city's artistic and commercial heritage. The bridge offers stunning views of the river and is a popular spot for a romantic stroll." },
+                    { name: "Dolomites", desc: "A mountain range located in northeastern Italy, the Dolomites are part of the Southern Limestone Alps. They are famous for their unique, jagged rock formations and stunning vertical cliffs. The region offers incredible opportunities for hiking, rock climbing, and skiing, and its breathtaking landscapes make it a UNESCO World Heritage site. The Dolomites are a paradise for outdoor enthusiasts and nature photographers." }
+                ]
+            },
+            "Japan": {
+                img: "images/japan.jpg",
+                desc: "Japan blends ancient temples, futuristic cities, and a rich culture centered on cherry blossoms and sushi. A country of stunning contrasts, Japan seamlessly marries its deep-rooted traditions with cutting-edge technology. From the tranquil gardens of Kyoto to the neon-lit streets of Tokyo, it offers a journey that is both exhilarating and serene, providing a unique insight into a society that values respect, beauty, and innovation.",
+                bg: "images/japan2.jpg",
+                places: [
+                    { name: "Mount Fuji", desc: "Japan’s tallest mountain and a UNESCO site, Mount Fuji is a perfectly symmetrical volcanic cone and a powerful symbol of the nation. It is a popular subject in art and a revered pilgrimage site. Hikers can climb to the summit during the official climbing season, while others can admire its beauty from the Fuji Five Lakes region, where its reflection on the water creates a picturesque view that is a favorite of photographers." },
+                    { name: "Tokyo Skytree", desc: "The tallest tower in Japan and the second-tallest structure in the world, the Tokyo Skytree is a broadcasting and observation tower in Sumida, Tokyo. Its two observation decks offer panoramic views of the sprawling city, including Mount Fuji on clear days. The tower's modern design and impressive height make it a dominant feature of the city's skyline and a popular destination for tourists." },
+                    { name: "Kiyomizu-dera Temple", desc: "A Buddhist temple in eastern Kyoto, Kiyomizu-dera is famous for its impressive wooden stage that juts out from the main hall, offering stunning views of the city below and the vibrant autumn foliage or cherry blossoms. The temple, which means 'Pure Water Temple,' is built without a single nail and is a UNESCO World Heritage Site. Visitors can drink from the waterfall at the base, which is believed to grant wishes." },
+                    { name: "Fushimi Inari-taisha", desc: "A Shinto shrine in Kyoto famous for its thousands of vibrant red torii gates that wind through a network of trails leading up the sacred Mount Inari. The shrine is dedicated to Inari, the god of rice, and the gates are donations from businesses and individuals. Walking through the tunnel of gates is a unique and spiritual experience that immerses visitors in Japanese culture and tradition." },
+                    { name: "Arashiyama Bamboo Grove", desc: "Located on the outskirts of Kyoto, the Arashiyama Bamboo Grove is a natural forest of towering bamboo stalks that create a serene and mystical atmosphere. The tall, rustling stalks cast beautiful shadows and create a unique sound as they sway in the wind. Walking through the grove's path is a peaceful escape from the hustle and bustle of city life and a favorite spot for visitors seeking tranquility." },
+                    { name: "Hiroshima Peace Memorial Park", desc: "A memorial park in the city of Hiroshima, dedicated to the victims of the atomic bombing in 1945. The park is a powerful and solemn reminder of the city's tragic history and a symbol of hope for world peace. It includes the Peace Memorial Museum, which documents the bombing, and the iconic A-Bomb Dome, one of the few structures that survived the blast. It is a deeply moving and important place to visit." },
+                    { name: "Shibuya Crossing", desc: "One of the world's busiest pedestrian intersections, Shibuya Crossing in Tokyo is an iconic symbol of the city's vibrant energy and population density. When the traffic lights turn red, pedestrians flood the intersection from all directions in a synchronized chaos. Watching the spectacle from a nearby café or a high vantage point is a quintessential Tokyo experience that captures the city's fast-paced, modern spirit." },
+                    { name: "Itsukushima Shrine", desc: "A Shinto shrine on the island of Itsukushima, in the city of Hatsukaichi. The shrine is famous for its iconic 'floating' torii gate, which appears to rise out of the water at high tide. The shrine and its gate are a UNESCO World Heritage Site and one of Japan's most photographed landmarks. The serene and beautiful setting, surrounded by mountains and the sea, makes it a truly spiritual place." },
+                    { name: "Osaka Castle", desc: "A majestic castle in Osaka, Osaka Castle is one of Japan's most famous landmarks and a symbol of the city's history. The castle has a rich history, having been built by Toyotomi Hideyoshi in the 16th century. Its beautiful grounds, stone walls, and intricate architecture make it a popular spot for cherry blossom viewing in the spring and a must-visit for anyone interested in Japanese history and feudal architecture." },
+                    { name: "Gion District", desc: "The Gion District in Kyoto is the city's most famous geisha district. It is known for its traditional wooden machiya houses, teahouses, and exclusive restaurants. Visitors can stroll through its lantern-lit streets in the evening, hoping for a glimpse of a geiko or maiko (apprentice geisha) on their way to an appointment. The district offers a captivating glimpse into Japan's traditional arts and customs." }
+                ]
+            },
+            "India": {
+                img: "images/india.jpg",
+                desc: "A land of vibrant traditions, majestic palaces, and the iconic Taj Mahal, India is a country of immense diversity. From the snow-capped Himalayas in the north to the tropical beaches of the south, it offers a rich tapestry of landscapes, cultures, and cuisines. The country’s history is a complex mosaic of ancient civilizations, colonial influences, and a spiritual heritage that is deeply woven into the fabric of daily life.",
+                bg: "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=2600",
+                places: [
+                    { name: "Taj Mahal", desc: "A symbol of eternal love built by Emperor Shah Jahan in Agra, the Taj Mahal is a white marble mausoleum and one of the New Seven Wonders of the World. It is a masterpiece of Mughal architecture, known for its intricate carvings, stunning symmetry, and beautiful gardens. The monument changes color throughout the day, from a soft pink in the morning to a brilliant white at noon, captivating all who visit with its ethereal beauty and poignant history." },
+                    { name: "Jaipur City Palace", desc: "A fusion of Mughal and Rajput architecture, the Jaipur City Palace complex reflects India’s royal heritage. It includes beautiful courtyards, gardens, and buildings, as well as a museum showcasing royal costumes, weapons, and art. The palace continues to be the residence of the Jaipur royal family, offering visitors a glimpse into the lavish lifestyle of India's past royalty." },
+                    { name: "Varanasi Ghats", desc: "Located on the banks of the sacred Ganges River, the ghats (steps) of Varanasi are central to the city's spiritual life. They are used for bathing rituals, ceremonies, and cremation rites. Visiting the ghats at sunrise is a spiritual and moving experience, as pilgrims perform their morning prayers and rituals. Varanasi is one of the world's oldest continuously inhabited cities and a major pilgrimage site for Hindus." },
+                    { name: "Himalayan Region", desc: "The Himalayan region of India offers a stunning natural landscape of snow-capped peaks, deep valleys, and serene lakes. It is a haven for trekkers, adventurers, and spiritual seekers, with destinations like Ladakh, Uttarakhand, and Sikkim offering breathtaking views and opportunities for outdoor activities. The region is also home to ancient monasteries and peaceful villages, providing a tranquil escape from the city." },
+                    { name: "Red Fort", desc: "A historic fort in the city of Delhi, the Red Fort was the main residence of the Mughal emperors for nearly 200 years. Its massive red sandstone walls enclose a complex of palaces, gardens, and mosques. The fort is a symbol of India's rich history and is a UNESCO World Heritage Site, attracting millions of visitors who come to explore its grand architecture and learn about the Mughal Empire." },
+                    { name: "Goa Beaches", desc: "Goa is famous for its stunning beaches, which offer a perfect blend of sun, sand, and sea. The state has a unique culture influenced by its Portuguese colonial history, which is reflected in its architecture, cuisine, and festivals. From the lively beaches of Baga and Calangute to the peaceful shores of Palolem, Goa offers a variety of experiences for every type of traveler, from adventure to relaxation." },
+                    { name: "Ajanta and Ellora Caves", desc: "Located in Maharashtra, the Ajanta and Ellora Caves are a series of rock-cut caves that contain ancient Buddhist, Hindu, and Jain monuments. The Ajanta caves feature beautiful murals depicting Buddhist fables, while the Ellora caves are famous for their intricate carvings and sculptures, including the magnificent Kailasa Temple. The caves are a UNESCO World Heritage Site and a testament to India's rich artistic and religious heritage." },
+                    { name: "Kerala Backwaters", desc: "The Kerala Backwaters are a network of brackish lagoons, lakes, and canals that run parallel to the Arabian Sea coast. A houseboat cruise through the backwaters is a serene and peaceful experience, offering a glimpse into the local way of life. The region is known for its lush green landscapes, coconut groves, and unique ecosystem, making it a popular destination for eco-tourism and relaxation." },
+                    { name: "Golden Temple", desc: "The Golden Temple, or Sri Harmandir Sahib, is the holiest gurdwara of Sikhism, located in the city of Amritsar. Its magnificent golden exterior and serene surroundings make it a breathtaking sight. The temple is an important pilgrimage site for Sikhs and a symbol of equality and hospitality, with a community kitchen that serves free meals to thousands of visitors every day." },
+                    { name: "Hampi", desc: "A UNESCO World Heritage Site in Karnataka, Hampi is a village surrounded by the ruins of the ancient Vijayanagara Empire. Its landscape is a surreal mix of massive boulders, ancient temples, and sprawling ruins. The Virupaksha Temple and the Vittala Temple with its famous stone chariot are among the most popular attractions. Hampi offers a unique and unforgettable journey into India's historical past." }
+                ]
+            },
+            "Africa": {
+                img: "images/africa.jpg",
+                desc: "Explore wild safaris, ancient pyramids, and diverse landscapes across Africa. A continent of incredible scale and natural beauty, Africa offers a journey into ancient civilizations and a vibrant wilderness. From the arid deserts of the Sahara to the lush jungles of the Congo Basin, its vast and varied landscapes are home to an unparalleled diversity of wildlife and a rich tapestry of cultures that make it an unforgettable travel destination.",
+                bg: "images/africa2.jpg",
+                places: [
+                    { name: "Serengeti National Park", desc: "Located in Tanzania, the Serengeti National Park is a vast ecosystem famous for the Great Migration, where millions of wildebeest, zebras, and gazelles travel in search of fresh grazing. The park is a UNESCO World Heritage Site and offers an incredible opportunity to witness the 'Big Five' (lion, leopard, elephant, rhino, and buffalo) in their natural habitat. It is a premier safari destination and a true wilderness experience." },
+                    { name: "Giza Pyramid Complex", desc: "Located on the Giza Plateau near Cairo, the Giza Pyramid Complex is home to the Great Pyramid of Giza, the Pyramid of Khafre, and the Pyramid of Menkaure, along with the Great Sphinx. The pyramids are ancient wonders of the world and a testament to the engineering and architectural prowess of the ancient Egyptians. Exploring the complex is a journey back in time, allowing visitors to marvel at these monumental structures." },
+                    { name: "Sahara Desert", desc: "The largest hot desert in the world, the Sahara Desert spans much of North Africa. Its vast expanse of golden dunes, rocky plateaus, and stunning silence offers a unique and profound experience. Visitors can go on camel treks, ride dune buggies, and spend a night under the stars, which are incredibly clear in the desert. The Sahara is a place of immense beauty and spiritual solitude." },
+                    { name: "Victoria Falls", desc: "Located on the border of Zambia and Zimbabwe, Victoria Falls is one of the world's largest and most powerful waterfalls. The immense volume of water plunging into the gorge below creates a mist that can be seen for miles. The falls are a UNESCO World Heritage Site and offer a range of activities, including rafting, bungee jumping, and a walk through the rainforest to witness the stunning views from different angles." },
+                    { name: "Cape Town", desc: "A coastal city in South Africa, Cape Town is a stunning blend of natural beauty and urban sophistication. It is known for its iconic Table Mountain, beautiful beaches, and vibrant cultural scene. Visitors can take a cable car to the top of Table Mountain for panoramic views, explore the colorful Bo-Kaap neighborhood, and visit Robben Island, where Nelson Mandela was imprisoned. Cape Town is a city of incredible history and breathtaking landscapes." },
+                    { name: "Mount Kilimanjaro", desc: "The highest mountain in Africa, Mount Kilimanjaro is a dormant volcano in Tanzania. It is one of the world's most accessible high peaks, and thousands of climbers attempt to reach its summit each year. The climb takes you through a range of ecosystems, from rainforest to alpine desert, offering a challenging but rewarding adventure with incredible views from the summit." },
+                    { name: "Marrakech", desc: "A major city in Morocco, Marrakech is a vibrant and bustling city known for its historic medina, souks (marketplaces), and traditional riads. The Djemaa el-Fna square is the heart of the medina, coming alive at night with food stalls, storytellers, and musicians. Exploring the city's labyrinthine alleys, beautiful palaces, and vibrant colors is an immersive cultural experience that stimulates all the senses." },
+                    { name: "Okavango Delta", desc: "Located in Botswana, the Okavango Delta is a vast inland delta that is a true natural wonder. It is a labyrinth of lagoons, channels, and islands that are a haven for wildlife, including elephants, hippos, and lions. A mokoro (traditional canoe) safari offers a unique way to explore the delta's serene beauty and get up close with its diverse wildlife." },
+                    { name: "Stone Town, Zanzibar", desc: "The historic heart of Zanzibar City, Stone Town is a UNESCO World Heritage Site and a melting pot of African, Arab, Indian, and European cultures. Its narrow, winding streets, intricately carved doors, and historic buildings tell the story of the city's rich history as a trading hub. Exploring Stone Town is a fascinating journey through history, offering a unique glimpse into the region's cultural heritage." },
+                    { name: "Valley of the Kings", desc: "A valley in Egypt where tombs were constructed for the pharaohs and powerful nobles of the New Kingdom. The valley is famous for the tomb of Tutankhamun, which was discovered almost fully intact. Exploring the tombs, with their intricate hieroglyphics and colorful paintings, is a captivating experience that provides a deep understanding of ancient Egyptian beliefs and their preparation for the afterlife." }
+                ]
+            }
+        };
+
+        // DOM elements
+        const homepageSection = document.getElementById("homepage");
+        const countryDetailsSection = document.getElementById("countryDetails");
+        const placesList = document.getElementById("placesList");
+        const countryInfoContainer = document.querySelector(".country-info-container");
+        const searchInput = document.getElementById("searchInput");
+        const backBtn = document.querySelector(".back-btn");
+        const noResultsDiv = document.getElementById("noResults");
+        const homepageBgUrl = "https://images.unsplash.com/photo-1542194511-2e656d0d5718?q=80&w=2600";
+
+        // --- Functions ---
+
+        // Renders the initial country cards on the homepage
+        function renderCountryCards(countries) {
+            placesList.innerHTML = ""; // Clear existing cards
+            Object.keys(countries).forEach(countryName => {
+                const country = countries[countryName];
+                const cardHTML = `
+                    <div class="card" data-country="${countryName}">
+                        <img src="${country.img}" alt="${countryName}">
+                        <h3>${countryName}</h3>
+                        <p>${country.desc}</p>
+                    </div>
+                `;
+                placesList.insertAdjacentHTML('beforeend', cardHTML);
+            });
+            addCardEventListeners();
+        }
+
+        // Adds click listeners to each card to show details
+        function addCardEventListeners() {
+            const cards = document.querySelectorAll(".card");
+            cards.forEach(card => {
+                card.addEventListener("click", () => {
+                    const countryName = card.dataset.country;
+                    showCountryDetails(countryName);
+                });
+            });
+        }
+
+        // Displays the details page for a specific country with animation
+        function showCountryDetails(countryName) {
+            const country = ALL_COUNTRIES_DATA[countryName];
+            if (!country) return;
+
+            // Fade out the homepage
+            homepageSection.style.opacity = '0';
+            setTimeout(() => {
+                homepageSection.classList.add("hidden");
+                countryDetailsSection.classList.remove("hidden");
+                countryDetailsSection.style.opacity = '0';
+
+                // Update the background image
+                document.body.style.backgroundImage = `url(${country.bg})`;
+                document.body.style.backgroundSize = "cover";
+                document.body.style.backgroundPosition = "center";
+
+                // Build the HTML for the details page
+                let placesHTML = `<h2>${countryName} - Most Visited Places</h2>`;
+                country.places.forEach(place => {
+                    placesHTML += `
+                        <div class="card fade-in">
+                            <h3>${place.name}</h3>
+                            <p>${place.desc}</p>
+                        </div>
+                    `;
+                });
+
+                // Update content and fade in the new section
+                countryInfoContainer.innerHTML = placesHTML;
+                setTimeout(() => {
+                    countryDetailsSection.style.opacity = '1';
+                }, 50); // Small delay to ensure the DOM is ready
+            }, 300); // Wait for the homepage to fade out
+        }
+
+        // Returns to the homepage view with animation
+        function goBack() {
+            countryDetailsSection.style.opacity = '0'; // Start the fade-out
+            setTimeout(() => {
+                document.body.style.backgroundImage = `url(${homepageBgUrl})`;
+                document.body.style.backgroundSize = "cover";
+                document.body.style.backgroundPosition = "center";
+                homepageSection.classList.remove("hidden");
+                countryDetailsSection.classList.add("hidden");
+                homepageSection.style.opacity = '0'; // Start fade in from 0
+                setTimeout(() => {
+                    homepageSection.style.opacity = '1';
+                }, 50); // Small delay
+            }, 300); // Wait for fade-out to finish
+            
+            searchInput.value = "";
+            renderCountryCards(ALL_COUNTRIES_DATA);
+        }
+
+        // --- Event Listeners ---
+
+        // Live search filtering
+        searchInput.addEventListener("input", () => {
+            const query = searchInput.value.toLowerCase().trim();
+            const filteredCountries = {};
+            let found = false;
+
+            // Filter the ALL_COUNTRIES_DATA based on the search query
+            for (const countryName in ALL_COUNTRIES_DATA) {
+                if (countryName.toLowerCase().includes(query)) {
+                    filteredCountries[countryName] = ALL_COUNTRIES_DATA[countryName];
+                    found = true;
+                }
+            }
+
+            if (found) {
+                noResultsDiv.classList.add("hidden");
+                renderCountryCards(filteredCountries);
+            } else {
+                noResultsDiv.classList.remove("hidden");
+                placesList.innerHTML = ""; // Clear cards
+            }
+        });
+
+        // Back button functionality
+        backBtn.addEventListener("click", goBack);
+
+        // Initial rendering of cards on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.style.backgroundImage = `url(${homepageBgUrl})`;
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+            renderCountryCards(ALL_COUNTRIES_DATA);
+        });
+    </script>
+</body>
+</html>
